@@ -13,7 +13,7 @@ Esta errado mas nao sei aonde, talvez nao tenha entendido corretamente o problem
 
 using namespace std;
 
-#define n 100 //numero de clientes que o barbeiro vai cortar
+#define n 10 //numero de clientes que o barbeiro vai cortar
 #define queueSize 3
 
 
@@ -73,7 +73,7 @@ void barbeiro(){
 
 void cliente(int id){
     // printf("thread %d começou\n",id);
-    usleep(1000);
+    // usleep(1000);
     mf.querCortar(id);
     // printf("thread %d terminou\n",id);
 
