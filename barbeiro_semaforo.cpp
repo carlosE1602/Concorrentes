@@ -30,7 +30,7 @@ void cliente(int id)
     sem_wait(&mux);
     int nEspera;
     sem_getvalue(&sCli, &nEspera);
-    if (nEspera < 3)
+    if (nEspera < 25)
     {
         sem_post(&sCli);
         atendidos++;
@@ -52,7 +52,7 @@ int main()
     sem_init(&sCli, 0, 0);
     sem_init(&sFila, 0, 0);
     sem_init(&mux, 0, 1);
-    int n = 100;
+    int n = 10000;
     vector<thread> threads;
     threads.push_back(thread(barbeiro,n)); //barbeiro corta n cabelos
     for(int c = 0;c<n;c++) threads.push_back(thread(cliente,c));

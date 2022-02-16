@@ -6,15 +6,11 @@
 #include <vector>
 #include <time.h>
 
-/*
-Esta errado mas nao sei aonde, talvez nao tenha entendido corretamente o problema
-*/
-
 
 using namespace std;
 
-#define n 10 //numero de clientes que o barbeiro vai cortar
-#define queueSize 3
+#define n 100 //numero de clientes que o barbeiro vai cortar
+#define queueSize 30 //tamanho da fila
 
 
 class MonitorBarbeiro{
@@ -33,25 +29,29 @@ class MonitorBarbeiro{
                 esperaBarbeiro.wait(lck,[this]()->bool{
                         return fila != 0;
                         });
+                
+                printf("Barbeiro acordou\n");
                 printf("Cortando cabelo\n");
                 printf("Ainda tem %d pessoas para cortar\n",--fila);
-                // fila--;
+                printf("Barbeiro voltou a dormir\n");
                 podeCortar.notify_all();
-                // usleep(10000);
             }
         }
         void querCortar(int id){
+            // usleep(10000);
             unique_lock<mutex> lck(mux);
+            printf("Cliente %d chegou..\n",id);
             if(fila < queueSize){           // se tem espaco na fila, entra, avisa que quer cortar, e espera ate ser chamado
-                esperaBarbeiro.notify_one();
-                
                 fila++;
+                esperaBarbeiro.notify_one();
                 printf("Cliente %d entrou na fila e esta esperando\n",id);
+                
                 podeCortar.wait(lck);
                 cortou++;
             }else{
+                if(fila < queueSize) { cout << "houve um erro, uma thread desistiu com espaco na fila\n"; abort();}
                 printf("A fila tem %d pessoas e o cliente %d foi nao pode cortar o cabelo\n",fila,id);
-                numCortes--;
+                numCortes--;    
                 desistiu++;
             }
             printf("%d foi embora \n",id);
@@ -72,11 +72,7 @@ void barbeiro(){
 }
 
 void cliente(int id){
-    // printf("thread %d começou\n",id);
-    // usleep(1000);
     mf.querCortar(id);
-    // printf("thread %d terminou\n",id);
-
 }
 
 int main(){
