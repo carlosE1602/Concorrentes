@@ -4,22 +4,27 @@
 using namespace std;
 
 int main(){
-    int A[3][3] = { {2,-3, 0},
-                    {4,-5, 1},
-                    {2,-1, -3}};
+    size_t N = 5;
+    int A[N][N] = { {1,1, 1,1,1},
+                    {0,1,1,1,1},
+                    {0,0,1,1,1},
+                    {0,0,0,1,0},
+                    {0,0,0,0,1}};
 
-    int b[3] = {3,1,0};
+    int b[N] = {5,4,3,2,0};
 
-    int row = 3, col = 3, n = 3;
+    int row = N, col = N, n = N;
 
-    int x[3];
+    int x[N];
     // #pragma omp parallel for
     for (row = n-1; row >= 0; row--) {
         x[row] = b[row];
-        // #pragma omp parallel for
+        int aux = x[row];
+        #pragma omp shared(A,x,n,row) parallel for reduction(-:aux)
         for (col = row+1; col < n; col++)
-            x[row] -= A[row][col] * x[col];
-        x[row] /= A[row][row];
+            aux -= A[row][col] * x[col];
+        // x[row] = aux;    
+        x[row] = aux/A[row][row];
     }
 
     for(int i = 0;i<n;i++) cout << x[i] << " ";
